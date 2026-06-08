@@ -561,8 +561,8 @@ Streamlit Chatbot
 | Thành viên | MSSV | Nhiệm vụ | Trạng thái |
 |-----------|------|----------|------------|
 | Nguyễn Ngọc Hảo | 2A202600903 | Tích hợp retrieval/generation vào chatbot, xử lý citation, conversation memory, guardrail và fallback khi LLM lỗi | Done |
-| Phạm Thanh Hằng |  | Chuẩn bị golden dataset, rà soát expected answer/context, chạy evaluation và tổng hợp bảng điểm | Done |
-| Ngô Đức Lãm |  | Hoàn thiện giao diện demo, kiểm thử câu hỏi mẫu, ghi nhận lỗi/worst cases và đề xuất cải tiến | Done |
+| Phạm Thanh Hằng | 2A202600593 | Chuẩn bị golden dataset, rà soát expected answer/context, chạy evaluation và tổng hợp bảng điểm | Done |
+| Ngô Đức Lãm | 2A202600655 | Hoàn thiện giao diện demo, kiểm thử câu hỏi mẫu, ghi nhận lỗi/worst cases và đề xuất cải tiến | Done |
 
 ---
 
