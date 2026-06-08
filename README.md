@@ -498,10 +498,10 @@ run_dashboard()
 
 #### Deliverable Evaluation
 
-- [ ] File `group_project/evaluation/golden_dataset.json` — 15+ cặp Q&A
-- [ ] File `group_project/evaluation/eval_pipeline.py` — script chạy evaluation
-- [ ] File `group_project/evaluation/results.md` — bảng điểm + phân tích
-- [ ] So sánh A/B ít nhất 2 configs
+- [x] File `group_project/evaluation/golden_dataset.json` — 15 cặp Q&A, có `question`, `expected_answer`, `expected_context`, `expected_sources`
+- [x] File `group_project/evaluation/eval_pipeline.py` — script chạy evaluation cho 2 cấu hình retrieval
+- [x] File `group_project/evaluation/results.md` — bảng điểm, phân tích worst performers và đề xuất cải tiến
+- [x] So sánh A/B ít nhất 2 configs — `hybrid + rerank` và `hybrid no rerank`
 
 ---
 
@@ -518,7 +518,40 @@ run_dashboard()
 ### Kiến Trúc Hệ Thống
 
 ```
-[Vẽ diagram kiến trúc ở đây]
+Raw data
+  ├─ Legal PDF/DOC files
+  └─ News JSON files
+        │
+        ▼
+Task 3 - Markdown conversion
+        │
+        ▼
+data/standardized/
+        │
+        ▼
+Task 4 - Chunking + Cohere embeddings
+        │
+        ├─ Local cache: data/index/chunks.json, embeddings.npy
+        └─ Weaviate Cloud: collection DrugLawDocs
+        │
+        ▼
+User query
+        │
+        ├─ Task 5 Semantic Search: Cohere query embedding + Weaviate
+        ├─ Task 6 Lexical Search: BM25
+        └─ Task 8 PageIndex Vectorless fallback
+        │
+        ▼
+Task 9 Retrieval Pipeline
+  Semantic + BM25 → RRF merge → optional Jina rerank → fallback if low score
+        │
+        ▼
+Task 10 Generation
+  reorder context → prompt with citation labels → LLM/extractive fallback
+        │
+        ▼
+Streamlit Chatbot
+  answer with citations + source documents + conversation memory
 ```
 
 ---
@@ -527,23 +560,39 @@ run_dashboard()
 
 | Thành viên | MSSV | Nhiệm vụ | Trạng thái |
 |-----------|------|----------|------------|
-| | | | |
-| | | | |
-| | | | |
-| | | | |
+| Nguyễn Ngọc Hảo | 2A202600903 | Tích hợp retrieval/generation vào chatbot, xử lý citation, conversation memory, guardrail và fallback khi LLM lỗi | Done |
+| Phạm Thanh Hằng |  | Chuẩn bị golden dataset, rà soát expected answer/context, chạy evaluation và tổng hợp bảng điểm | Done |
+| Ngô Đức Lãm |  | Hoàn thiện giao diện demo, kiểm thử câu hỏi mẫu, ghi nhận lỗi/worst cases và đề xuất cải tiến | Done |
 
 ---
 
 ### Hướng Dẫn Chạy
 
 ```bash
-# Cài đặt dependencies
-pip install -r requirements.txt
+# Di chuyển vào project
+cd D:\Vin\Day08_RAG_pipeline_cohort2
 
-# Chạy app
-streamlit run app.py
-# hoặc
-chainlit run app.py
+# Cài đặt dependencies trong venv nếu cần
+.\venv\Scripts\pip.exe install -r requirements.txt
+
+# Chạy Streamlit chatbot
+.\venv\Scripts\python.exe -m streamlit run group_project\app.py --server.port 8501
+
+# Chạy evaluation pipeline
+.\venv\Scripts\python.exe group_project\evaluation\eval_pipeline.py --top-k 3
+```
+
+Chatbot chạy tại:
+
+```text
+http://localhost:8501
+```
+
+Nếu port 8501 đang bị app cũ chiếm:
+
+```powershell
+Get-NetTCPConnection -LocalPort 8501 -State Listen -ErrorAction SilentlyContinue |
+  ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
 ```
 
 ---
